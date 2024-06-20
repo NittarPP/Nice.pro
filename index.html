@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Update User Profile</title>
+</head>
+<body>
+  <h1>Update User Profile with Image</h1>
+
+  <!-- Form to input User ID and File URL -->
+  <form id="updateForm" onsubmit="return false;">
+    <label for="userId">User ID:</label>
+    <select id="userId" name="userId">
+      <!-- Populate options dynamically from users object -->
+      <!-- Replace with your actual user IDs and values -->
+      <option value="">Select User ID</option>
+      <script>
+        var users = {
+          "1": "66738901642d445c0bc5db1d",
+          "2": "66738912642d445c0bc5dbeb",
+          "3": "66738a2e642d445c0bc5df8f",
+          "4": "66738a39642d445c0bc5dfc3",
+          "5": "66738a46642d445c0bc5dfd5",
+          "6": "66738a52642d445c0bc5dfd7",
+          "7": "66738a62642d445c0bc5e047",
+          "8": "66738a6e642d445c0bc5e068",
+          "9": "66738ad0642d445c0bc5e1ae",
+          "10": "66738af3642d445c0bc5e201",
+          "11": "66738aff642d445c0bc5e214",
+          "12": "66738b09642d445c0bc5e231",
+          "13": "66738b15642d445c0bc5e232",
+          "14": "66738b1f642d445c0bc5e255",
+          "15": "66738b2b642d445c0bc5e2d2",
+          "16": "66738b35642d445c0bc5e31a",
+          "17": "66738b41642d445c0bc5e321",
+          "18": "66738b4b642d445c0bc5e328",
+          "19": "66738b57642d445c0bc5e34b",
+          "20": "66738b61642d445c0bc5e38e",
+          "21": "66738b6e642d445c0bc5e3eb",
+          "22": "66738b79642d445c0bc5e417",
+          "23": "66738b8b642d445c0bc5e421",
+          "24": "66738bce642d445c0bc5e4b6",
+          "25": "66738fd7642d445c0bc5edb5",
+          "26": "66738fe8642d445c0bc5edd3",
+          "27": "66738ff4642d445c0bc5edd6",
+          "28": "66739006642d445c0bc5ee03",
+          "29": "66739011642d445c0bc5ee05",
+          "30": "6673901c642d445c0bc5ee22",
+          "31": "66739029642d445c0bc5ee24",
+          "32": "66739034642d445c0bc5ee28",
+          "33": "6673907d642d445c0bc5eebe",
+          "34": "66739089642d445c0bc5eec0",
+          "35": "66739094642d445c0bc5eec4",
+          "36": "667390a1642d445c0bc5eedf",
+          "37": "667390ae642d445c0bc5eee0",
+          "38": "6673882e642d445c0bc5d8da",
+          "39": "667390ca642d445c0bc5ef10",
+          "40": "6673a2bb642d445c0bc61ea3",
+          "Man": "667395ab642d445c0bc5fb5b"
+        };
+
+        Object.keys(users).forEach(function(key) {
+          var option = document.createElement("option");
+          option.value = key;
+          option.textContent = key;
+          document.getElementById("userId").appendChild(option);
+        });
+      </script>
+    </select>
+    <br><br>
+    <label for="fileUrl">File URL:</label>
+    <input type="text" id="fileUrl" name="fileUrl" required>
+    <br><br>
+    <button onclick="updateUserProfile()">Update Profile</button>
+  </form>
+
+  <script>
+    // Function to fetch the file from a URL
+    async function fetchFile(url) {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      return new File([blob], "Nice_Edit.gif", { type: "image/png" });
+    }
+
+    async function updateUserProfile() {
+      // Get selected User ID and File URL
+      const userId = document.getElementById("userId").value;
+      const fileUrl = document.getElementById("fileUrl").value;
+
+      try {
+        // Fetch the file
+        let file = await fetchFile(fileUrl);
+
+        // Create a FormData object and append the file
+        let formData = new FormData();
+        formData.append("file", file);
+
+        // Send PUT request to update user profile
+        let response = await fetch(`https://student-server.tatugacamp.com/student/update?studentId=${users[userId]}`, {
+          headers: {
+            "accept": "application/json, text/plain, */*",
+            "accept-language": "en-US,en;q=0.9",
+            "priority": "u=1, i",
+            "sec-ch-ua": "\"Chromium\";v=\"124\", \"Opera\";v=\"110\", \"Not-A.Brand\";v=\"99\"",
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": "\"Windows\"",
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "same-site"
+          },
+          referrer: "https://student.tatugacamp.com/",
+          referrerPolicy: "strict-origin-when-cross-origin",
+          body: formData,
+          method: "PUT",
+          mode: "cors",
+          credentials: "omit"
+        });
+
+        let data = await response.json();
+        console.log(`Data for user ${userId}:`, data);
+
+      } catch (error) {
+        console.error(`Error fetching data for user ${userId}:`, error);
+      }
+    }
+  </script>
+</body>
+</html>
